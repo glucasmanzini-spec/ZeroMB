@@ -1,0 +1,2 @@
+#!/bin/sh
+exec chromium --process-per-site --enable-low-end-device-mode --enable-gpu-rasterization --enable-zero-copy --disable-background-networking --disk-cache-size=52428800 "$@"
