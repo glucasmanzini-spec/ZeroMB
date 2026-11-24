@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+# Define identidade do ZeroMB
+echo "zeromb" > /etc/hostname
+cat << 'EOF' > /etc/os-release
+PRETTY_NAME="ZeroMB Linux"
+NAME="ZeroMB"
+ID=zeromb
+ID_LIKE=debian
+HOME_URL="https://github.com"
+EOF
+
+# Permissões de execução
+chmod +x /usr/local/bin/navegador
+chmod +x /etc/skel/.xinitrc
+
+# Faz o terminal iniciar o X11/JWM automaticamente no tty1
+cat << 'EOF' >> /etc/skel/.profile
+if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+    exec startx
+fi
+EOF
+
+# Adiciona o botão "Navegador" no topo do menu do JWM
+if [ -f /etc/jwm/system.jwmrc ]; then
+    cp /etc/jwm/system.jwmrc /etc/skel/.jwmrc
+    sed -i 's|<RootMenu onroot="12">|<RootMenu onroot="12"><Program label="Navegador (Leve)">navegador</Program>|' /etc/skel/.jwmrc
+fi
+
+# Limpeza extrema para reduzir ISO e uso de disco/RAM
+rm -rf /usr/share/doc/*
+rm -rf /usr/share/man/*
+rm -rf /usr/share/info/*
+rm -rf /var/cache/apt/archives/*
+rm -rf /var/lib/apt/lists/*
