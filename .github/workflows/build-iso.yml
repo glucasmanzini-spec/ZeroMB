@@ -1,0 +1,41 @@
+name: Build ZeroMB Linux ISO
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código do ZeroMB
+        uses: actions/checkout@v4
+
+      - name: Instalar ferramentas de build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin
+
+      - name: Compilar ZeroMB ISO
+        run: |
+          mkdir -p build
+          cp -r config build/
+          cd build
+          sudo lb config \
+            --distribution bookworm \
+            --architectures amd64 \
+            --binary-images iso-hybrid \
+            --apt-recommends false \
+            --debian-installer live \
+            --iso-application "ZeroMB Linux" \
+            --iso-volume "ZEROMB" \
+            --bootappend-live "boot=live components quiet"
+          sudo lb build
+          mv live-image-amd64.hybrid.iso ZeroMB-amd64.iso
+
+      - name: Upload da ISO pronta
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZeroMB-Linux-amd64
+          path: build/ZeroMB-amd64.iso
