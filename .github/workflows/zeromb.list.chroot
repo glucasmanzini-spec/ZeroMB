@@ -1,0 +1,15 @@
+sysvinit-core
+openrc
+xserver-xorg-core
+xserver-xorg-input-libinput
+xserver-xorg-video-intel
+xinit
+jwm
+xterm
+pipewire-pulse
+wireplumber
+fonts-noto-core
+mesa-vulkan-drivers
+libgl1-mesa-dri
+zram-tools
+chromium
